@@ -12,13 +12,43 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+@app.route("/")
+def home():
+    conn = get_db_connection()
+    movies = conn.execute('SELECT * FROM Movies').fetchall()
+    conn.close()
+    today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Format the release date for each movie
+    formatted_movies = []
+    for movie in movies:
+        formatted_movie = dict(movie)
+        formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
+        formatted_movies.append(formatted_movie)
+    
+    return render_template("index.html", today=today, movies=formatted_movies)
+
+@app.route("/add_movie", methods=["POST"])
+def add_movie():
+    name = request.form["name"]
+    release = request.form["release"]
+    rating = float(request.form["rating"])  # Convert rating to float
+    
+    conn = get_db_connection()
+    conn.execute("INSERT INTO Movies (name, release, rating) VALUES (?, ?, ?)",
+                 (name, release, rating))
+    conn.commit()
+    conn.close()
+    
+    return redirect("/")
+
 if __name__ == '__main__':
     conn = get_db_connection()
     conn.execute('''CREATE TABLE IF NOT EXISTS Movies
                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
-                    year INTEGER NOT NULL,
-                    rating TEXT NOT NULL,
+                    release DATE NOT NULL,
+                    rating REAL NOT NULL,
                     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.close()
     app.run(debug=True)

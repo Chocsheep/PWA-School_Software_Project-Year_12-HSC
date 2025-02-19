@@ -3,9 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Movie List</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    
+    <header>
+        <h1>Welcome to the Movie List</h1>
+        <p>Current date and time: {{ today }}</p>
+    </header>
+    <main>
+        <h2>Movies</h2>
+        <ul>
+            {% for movie in movies %}
+                <li>{{ movie.name }} ({{ movie.release }}) - Rating: {{ movie.rating }} / 10</li>
+            {% endfor %}
+        </ul>
+        <h2>Add a New Movie</h2>
+        <form action="/add_movie" method="post">
+            <label for="name">Movie Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter movie name" required>
+            <label for="release">Release Date:</label>
+            <input type="date" id="release" name="release" placeholder="Enter the movie's release date" required>
+            <label for="rating">Rating:</label>
+            <input type="float" id="rating" name="rating" placeholder="Enter the movie's rating" required>
+            <button type="submit">Add Movie</button>
+        </form>
+    </main>
 </body>
 </html>

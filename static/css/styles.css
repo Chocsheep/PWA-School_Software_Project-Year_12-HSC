@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #141414;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #e50914;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+header p {
+    margin: 5px 0 0;
+    font-size: 1.2em;
+}
+
+main {
+    padding: 20px;
+}
+
+h2 {
+    color: #e50914;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    background-color: #333333;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    width: 20%;
+}
+
+form {
+    background-color: #333333;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    width: 50%;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+form input[type="text"],
+form input[type="date"],
+form input[type="float"] {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+form button {
+    background-color: #e50914;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #f40612;
+}
