@@ -15,7 +15,8 @@ def get_db_connection():
 @app.route("/")
 def home():
     conn = get_db_connection()
-    movies = conn.execute('SELECT * FROM Movies').fetchall()
+    movies = conn.execute('SELECT * FROM Movies ORDER BY release DESC').fetchall()
+    movies_sorted_rating = conn.execute('SELECT * FROM Movies ORDER BY rating DESC').fetchall()
     conn.close()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     

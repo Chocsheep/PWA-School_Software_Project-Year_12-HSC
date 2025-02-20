@@ -18,16 +18,19 @@
                 <li>{{ movie.name }} ({{ movie.release }}) - Rating: {{ movie.rating }} / 10</li>
             {% endfor %}
         </ul>
+        <h1>
+            number of movies: {{ movies|length }}
+        </h1>
         <h2>Add a New Movie</h2>
         <form action="/add_movie" method="post">
             <label for="name">Movie Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter movie name" required>
             <label for="release">Release Date:</label>
-            <input type="date" id="release" name="release" placeholder="Enter the movie's release date" required>
+            <input type="date" id="release" name="release" required>
             <label for="rating">Rating:</label>
             <input type="float" id="rating" name="rating" placeholder="Enter the movie's rating" required>
             <button type="submit">Add Movie</button>
         </form>
-    </main>
+    </main> 
 </body>
 </html>
