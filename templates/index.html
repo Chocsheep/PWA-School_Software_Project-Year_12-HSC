@@ -12,6 +12,11 @@
         <p>Current date and time: {{ today }}</p>
     </header>
     <main>
+        <form class="sorting" action="/sort_movie" method="post">
+            <button type="submit" name="order" value="rating">Sort by Rating</button>
+            <button type="submit" name="order" value="release">Sort by Release Date</button>  
+            <button type="submit" name="order" value="name">Sort by Name</button>
+        </form>
         <h2>Movies</h2>
         <ul>
             {% for movie in movies %}

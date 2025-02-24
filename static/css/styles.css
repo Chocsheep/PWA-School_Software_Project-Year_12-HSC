@@ -43,7 +43,7 @@ ul li {
     padding: 15px;
     border-radius: 5px;
     font-size: 1.2em;
-    width: 20%;
+    width: 22%;
 }
 
 form {
@@ -83,4 +83,23 @@ form button {
 
 form button:hover {
     background-color: #f40612;
+}
+
+.sorting button {
+    background-color: #eb3740;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.sorting {
+    margin-top: 20px;
+    background-color: #803e3e;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    width: fit-content;
 }
