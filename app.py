@@ -52,13 +52,13 @@ def add_movie():
     return redirect("/#heading")
 
 @app.route("/sort_movie", methods=["POST"])
-def sort_movie():    
+def sort_movie():
     conn = get_db_connection()
     global asc_desc
     global movies_sorted
     global previous_order
     order = request.form["order"]
-    if asc_desc == "ASC" and previous_order == order:
+    if asc_desc == "ASC" and previous_order == order: # make it save the asc/desc order for each type of sorting
         asc_desc = "DESC"
     elif asc_desc == "DESC" and previous_order == order:
         asc_desc = "ASC"
