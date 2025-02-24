@@ -13,6 +13,7 @@
     </header>
     <main>
         <form class="sorting" action="/sort_movie" method="post">
+            <input type="hidden" name="toggle_rating" value="toggle">
             <button type="submit" name="order" value="rating">Sort by Rating</button>
             <button type="submit" name="order" value="release">Sort by Release Date</button>  
             <button type="submit" name="order" value="name">Sort by Name</button>

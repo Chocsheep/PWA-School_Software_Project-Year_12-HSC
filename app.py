@@ -16,9 +16,6 @@ conn = get_db_connection()
 movies = conn.execute('SELECT * FROM Movies').fetchall()
 movies_sorted = movies
 
-asc_desc = "DESC"
-previous_order = ""
-
 @app.route("/")
 def home():
     conn = get_db_connection()
@@ -41,7 +38,7 @@ def home():
 def add_movie():
     name = request.form["name"]
     release = request.form["release"]
-    rating = float(request.form["rating"])  # Convert rating to float
+    rating = float(request.form["rating"])  # Convert rating to float (decimal) for more precise ratings
     
     conn = get_db_connection()
     conn.execute("INSERT INTO Movies (name, release, rating) VALUES (?, ?, ?)",
@@ -51,21 +48,47 @@ def add_movie():
     
     return redirect("/#heading")
 
+# initialising the toggle values for sorting
+# this avoids the need to sort the movies every time the page is refreshed
+# since they are intialised in the database as values, and as global functions, they can be accessed and modified and won't be lost on page refresh
+toggle_rating = "DESC"
+toggle_release = "DESC"
+toggle_name = "DESC"
+previous_order = ""
+
+
 @app.route("/sort_movie", methods=["POST"])
 def sort_movie():
-    conn = get_db_connection()
-    global asc_desc
     global movies_sorted
+    global toggle_rating
+    global toggle_release
+    global toggle_name
     global previous_order
-    order = request.form["order"]
-    if asc_desc == "ASC" and previous_order == order: # make it save the asc/desc order for each type of sorting
-        asc_desc = "DESC"
-    elif asc_desc == "DESC" and previous_order == order:
-        asc_desc = "ASC"
-    movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {asc_desc}').fetchall()
-    previous_order = order
-    conn.close()
+
     
+    order = request.form["order"] # determining which button was pressed to sort the movies by
+
+    # main logic for toggling sorting based on which button was pressed
+    if order == "rating":
+        if previous_order == order:
+            toggle_rating = "ASC" if toggle_rating == "DESC" else "DESC"
+        toggle = toggle_rating
+    elif order == "release":
+        if previous_order == order:
+            toggle_release = "ASC" if toggle_release == "DESC" else "DESC"
+        toggle = toggle_release
+    elif order == "name":
+        if previous_order == order:
+            toggle_name = "ASC" if toggle_name == "DESC" else "DESC"
+        toggle = toggle_name
+
+    conn = get_db_connection()
+    movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall() # alter the SQL query based on the button pressed and whether it was ascending or descending
+    # this avoids the need to create separate SQL queries for each type of sort, leading to more efficient code and quicker server response times
+    conn.close()
+
+    previous_order = order
+
     return redirect("/#heading")
 
 if __name__ == '__main__':
