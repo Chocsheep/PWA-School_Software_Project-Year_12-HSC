@@ -15,7 +15,8 @@ def get_db_connection():
 @app.route("/")
 def home():
     conn = get_db_connection()
-    movies = conn.execute('SELECT * FROM Movies ORDER BY release DESC').fetchall()
+    movies = conn.execute('SELECT * FROM Movies').fetchall()
+    movies_by_release = conn.execute('SELECT * FROM Movies ORDER BY release DESC').fetchall()
     movies_sorted_rating = conn.execute('SELECT * FROM Movies ORDER BY rating DESC').fetchall()
     conn.close()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -41,7 +42,7 @@ def add_movie():
     conn.commit()
     conn.close()
     
-    return redirect("/")
+    return redirect("/#heading")
 
 if __name__ == '__main__':
     conn = get_db_connection()
