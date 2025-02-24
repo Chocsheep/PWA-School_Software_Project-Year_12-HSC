@@ -17,6 +17,7 @@ movies = conn.execute('SELECT * FROM Movies').fetchall()
 movies_sorted = movies
 
 asc_desc = "DESC"
+previous_order = ""
 
 @app.route("/")
 def home():
@@ -55,12 +56,14 @@ def sort_movie():
     conn = get_db_connection()
     global asc_desc
     global movies_sorted
+    global previous_order
     order = request.form["order"]
-    if asc_desc == "ASC":
+    if asc_desc == "ASC" and previous_order == order:
         asc_desc = "DESC"
-    elif asc_desc == "DESC":
+    elif asc_desc == "DESC" and previous_order == order:
         asc_desc = "ASC"
     movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {asc_desc}').fetchall()
+    previous_order = order
     conn.close()
     
     return redirect("/#heading")
