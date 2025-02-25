@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import sqlite3
 from datetime import datetime
 import random
@@ -56,7 +56,6 @@ toggle_release = "DESC"
 toggle_name = "DESC"
 previous_order = ""
 
-
 @app.route("/sort_movie", methods=["POST"])
 def sort_movie():
     global movies_sorted
@@ -65,8 +64,7 @@ def sort_movie():
     global toggle_name
     global previous_order
 
-    
-    order = request.form["order"] # determining which button was pressed to sort the movies by
+    order = request.form["order"]  # determining which button was pressed to sort the movies by
 
     # main logic for toggling sorting based on which button was pressed
     if order == "rating":
@@ -83,13 +81,14 @@ def sort_movie():
         toggle = toggle_name
 
     conn = get_db_connection()
-    movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall() # alter the SQL query based on the button pressed and whether it was ascending or descending
-    # this avoids the need to create separate SQL queries for each type of sort, leading to more efficient code and quicker server response times
+    movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall()  # alter the SQL query based on the button pressed and whether it was ascending or descending
     conn.close()
 
     previous_order = order
 
-    return redirect("/#heading")
+    # Convert the sorted movies to a list of dictionaries
+    sorted_movies = [dict(movie) for movie in movies_sorted]
+    return jsonify(sorted_movies)
 
 if __name__ == '__main__':
     conn = get_db_connection()

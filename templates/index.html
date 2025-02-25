@@ -13,14 +13,13 @@
         <p>Current date and time: {{ today }}</p>
     </header>
     <main>
-        <form class="sorting" action="/sort_movie" method="post">
-            <input type="hidden" name="toggle_rating" value="toggle">
-            <button type="submit" name="order" value="rating">Sort by Rating</button>
-            <button type="submit" name="order" value="release">Sort by Release Date</button>  
-            <button type="submit" name="order" value="name">Sort by Name</button>
-        </form>
+        <div class="sorting">
+            <button type="button" onclick="sortMovies('rating')">Sort by Rating</button>
+            <button type="button" onclick="sortMovies('release')">Sort by Release Date</button>  
+            <button type="button" onclick="sortMovies('name')">Sort by Name</button>
+        </div>
         <h2>Movies</h2>
-        <div class="movie-list">
+        <div class="movie-list" id="movie-list">
             {% for movie in movies %}
             <div class="movie-container">
                 <img src="/static/images/{{ movie.id }}.jpg" alt="{{ movie.name }} poster" class="movie-poster">
@@ -50,5 +49,7 @@
             <button type="submit">Add Movie</button>
         </form>
     </main> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/static/js/scripts.js"></script>
 </body>
 </html>
