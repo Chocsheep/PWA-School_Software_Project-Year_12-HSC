@@ -26,8 +26,26 @@
                 <div class="movie-details">
                     <h3 class="title">{{ movie.name }}</h3>
                     <div class="stars">
-                    {% for i in range((movie.rating / 2)|int) %}
+                    {% for i in range((5)|int) %}
+                        {% if i < ((movie.rating+0.5)/2)|int %}
                         <span class="fa fa-star checked"></span>
+                        {% elif ((movie.rating*2)|round)/4 - i >= 0.5 %}
+                        <span class="star fa fa-star unchecked"></span>
+                        <style>
+                            .star:after {
+                            font-family: FontAwesome;
+                            content: "\f005";
+                            position: absolute;
+                            left: 0;
+                            top: 0;
+                            width: {{ ((movie.rating) - i)*10 }}%;
+                            overflow: hidden;
+                            color: #f80;
+                          }
+                          </style>
+                        {% else %}
+                        <span class="fa fa-star unchecked"></span>
+                        {% endif %}
                     {% endfor %}
                     <p>Rating: {{ movie.rating }} / 10</p>
                     </div>

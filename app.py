@@ -87,8 +87,8 @@ def sort_movie():
     previous_order = order
 
     # Convert the sorted movies to a list of dictionaries
-    sorted_movies = [dict(movie) for movie in movies_sorted]
-    return jsonify(sorted_movies)
+    rendered_html = render_template('movies.html', movies=movies_sorted) # uses the sorted movies to render the movies.html template
+    return jsonify({'html': rendered_html}) # returns the rendered template of the sorted movies html $.ajax function in scripts.js
 
 if __name__ == '__main__':
     conn = get_db_connection()
