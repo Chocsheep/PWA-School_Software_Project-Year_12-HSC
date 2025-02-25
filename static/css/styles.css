@@ -103,3 +103,37 @@ form button:hover {
     margin-top: 20px;
     width: fit-content;
 }
+
+.movie-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust the number of columns based on available space */
+    gap: 10px; /* Add some gap between grid items */
+}
+
+.movie-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #333333;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.movie-poster {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 5px;
+}
+
+.checked {
+    color: orange;
+    margin-left: 5%;
+}
+
+.title {
+    text-align: center;
+}
+
+.stars {
+    text-align: center;
+}
