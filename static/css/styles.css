@@ -155,6 +155,7 @@ form button:hover {
     content: "\f005";
     position: absolute;
     left: 0;
+    width: var(--star-width); 
     top: 0;
     overflow: hidden;
     color: #f80;
