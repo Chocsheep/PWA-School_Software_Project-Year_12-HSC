@@ -1,21 +1,63 @@
-{% for movie in movies %}
-    <div class="movie-container">
-        <img src="/static/images/{{ movie.id }}.jpg" alt="{{ movie.name }} poster" class="movie-poster">
-        <div class="movie-details">
-            <h3 class="title">{{ movie.name }}</h3>
-            <div class="stars">
-            {% for i in range(1, 6) %}
-                {% if i <= ((movie.rating)/2)|int %}
-                <span class="fa fa-star checked"></span>
-                {% elif i - ((movie.rating)/2) > 0 and i - ((movie.rating)/2) < 1 %}
-                <span class="star fa fa-star unchecked" style= "--star-width: {{ (((movie.rating)/2) - ((movie.rating)/2)|int)*100 }}%"></span>
-                </style>
-                {% else %}
-                <span class="fa fa-star unchecked"></span>
-                {% endif %}
-            {% endfor %}
-            <p>Rating: {{ movie.rating }} / 10</p>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novlix</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="/static/images/logo1.jpg" type="image/icon">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Movie List</h1>
+        <p>Current date and time: {{ today }}</p>
+    </header>
+    <main>
+        <div class="sorting">
+            <button type="button" onclick="sortMovies('rating')">Sort by Rating</button>
+            <button type="button" onclick="sortMovies('release')">Sort by Release Date</button>  
+            <button type="button" onclick="sortMovies('name')">Sort by Name</button>
         </div>
-    </div>
-{% endfor %}
+        <h2>Movies</h2>
+        <div class="movie-list" id="movie-list">
+            {% for movie in movies %}
+            <div class="movie-container">
+                <img src="/static/images/{{ movie.id }}.jpg" alt="{{ movie.name }} poster" class="movie-poster">
+                <div class="movie-details">
+                    <h3 class="title">{{ movie.name }}</h3>
+                    <div class="stars">
+                    {% for i in range(1, 6) %}
+                        {% if i <= ((movie.rating)/2)|int %}
+                        <span class="fa fa-star checked"></span>
+                        {% elif i - ((movie.rating)/2) > 0 and i - ((movie.rating)/2) < 1 %}
+                        <span class="star fa fa-star unchecked" style= "--star-width: {{ (((movie.rating)/2) - ((movie.rating)/2)|int)*100 }}%"></span>
+                        </style>
+                        {% else %}
+                        <span class="fa fa-star unchecked"></span>
+                        {% endif %}
+                    {% endfor %}
+                    <p>Rating: {{ movie.rating }} / 10</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <h1>
+            number of movies: {{ movies|length }}
+        </h1>
+        <h2>Add a New Movie</h2>
+        <form action="/add_movie" method="post">
+            <label for="name">Movie Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter movie name" required>
+            <label for="release">Release Date:</label>
+            <input type="date" id="release" name="release" required>
+            <label for="rating">Rating:</label>
+            <input type="float" id="rating" name="rating" placeholder="Enter the movie's rating" required>
+            <button type="submit">Add Movie</button>
+        </form>
+    </main> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/static/js/scripts.js"></script>
+</body>
+</html>

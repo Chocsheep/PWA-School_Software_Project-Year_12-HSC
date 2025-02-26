@@ -1,0 +1,21 @@
+{% for movie in movies %}
+    <div class="movie-container">
+        <img src="/static/images/{{ movie.id }}.jpg" alt="{{ movie.name }} poster" class="movie-poster">
+        <div class="movie-details">
+            <h3 class="title">{{ movie.name }}</h3>
+            <div class="stars">
+            {% for i in range(1, 6) %}
+                {% if i <= ((movie.rating)/2)|int %}
+                <span class="fa fa-star checked"></span>
+                {% elif i - ((movie.rating)/2) > 0 and i - ((movie.rating)/2) < 1 %}
+                <span class="star fa fa-star unchecked" style= "--star-width: {{ (((movie.rating)/2) - ((movie.rating)/2)|int)*100 }}%"></span>
+                </style>
+                {% else %}
+                <span class="fa fa-star unchecked"></span>
+                {% endif %}
+            {% endfor %}
+            <p>Rating: {{ movie.rating }} / 10</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}

@@ -23,7 +23,6 @@ def home():
     movies_by_release = conn.execute('SELECT * FROM Movies ORDER BY release DESC').fetchall()
     movies_sorted_rating = conn.execute('SELECT * FROM Movies ORDER BY rating DESC').fetchall()
     conn.close()
-    today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Format the release date for each movie
     formatted_movies = []
@@ -32,7 +31,24 @@ def home():
         formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
         formatted_movies.append(formatted_movie)
     
-    return render_template("index.html", today=today, movies=formatted_movies)
+    return render_template("index.html", movies=formatted_movies)
+
+@app.route("/movies")
+def movies():
+    conn = get_db_connection()
+    global movies_sorted
+    movies_by_release = conn.execute('SELECT * FROM Movies ORDER BY release DESC').fetchall()
+    movies_sorted_rating = conn.execute('SELECT * FROM Movies ORDER BY rating DESC').fetchall()
+    conn.close()
+    
+    # Format the release date for each movie
+    formatted_movies = []
+    for movie in movies_sorted:
+        formatted_movie = dict(movie)
+        formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
+        formatted_movies.append(formatted_movie)
+    
+    return render_template("movies.html", movies=formatted_movies)
 
 @app.route("/add_movie", methods=["POST"])
 def add_movie():
@@ -87,7 +103,7 @@ def sort_movie():
     previous_order = order
 
     # Convert the sorted movies to a list of dictionaries
-    rendered_html = render_template('movies.html', movies=movies_sorted) # uses the sorted movies to render the movies.html template
+    rendered_html = render_template('movies_sort_template.html', movies=movies_sorted) # uses the sorted movies to render the movies.html template
     return jsonify({'html': rendered_html}) # returns the rendered template of the sorted movies html $.ajax function in scripts.js
 
 if __name__ == '__main__':

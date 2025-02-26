@@ -15,3 +15,11 @@ function sortMovies(order) {
         }
     });
 }
+
+
+
+
+
+// for my logo:
+// logo top left as home buttom
+// when sidebar opens, title is logo as well that also sends to home :D
