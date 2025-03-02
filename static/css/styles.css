@@ -172,3 +172,8 @@ form button:hover {
 .material-icons {
     font-size: 30px;
 }
+
+.form-inline {
+    margin-left: auto;
+    margin-right: 20px;
+}
