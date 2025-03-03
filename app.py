@@ -31,7 +31,11 @@ def home():
         formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
         formatted_movies.append(formatted_movie)
     
-    return render_template("index.html", movies=formatted_movies)
+    shuffled_movies = formatted_movies
+
+    random.shuffle(shuffled_movies) # shuffles the movies to display in a random order
+
+    return render_template("index.html", movies=formatted_movies, shuffled_movies=shuffled_movies[0:5])
 
 @app.route("/movies")
 def movies():
