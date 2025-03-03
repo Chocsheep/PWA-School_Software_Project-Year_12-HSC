@@ -38,12 +38,7 @@ ul {
 }
 
 ul li {
-    background-color: #333333;
-    margin: 10px 0;
-    padding: 15px;
-    border-radius: 5px;
-    font-size: 1.2em;
-    width: 22%;
+
 }
 
 
@@ -99,7 +94,7 @@ form button:hover {
 
 .movie-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust columns based on screen size */
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Adjust columns based on screen size */
     gap: 10px; /* Add some gap between grid items */
 }
 
@@ -162,7 +157,7 @@ form button:hover {
     max-width: 130px;
     margin-top: 0px;
     border-radius: 15px;
-    margin-left: -150px;
+    margin-left: -100px;
 }
 
 .mdl-navigation__link {
@@ -176,4 +171,18 @@ form button:hover {
 .form-inline {
     margin-left: auto;
     margin-right: 20px;
+}
+
+h3 {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.navbar {
+    width:100%;
+    border-radius: 15px;
+}
+
+.nav-item {
+    
 }
