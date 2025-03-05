@@ -31,34 +31,177 @@
             max-width: 40%;
         }
         .content h1 {
-            font-size: 3rem;
+            font-size: 5vw;
             font-weight: bold;
         }
         .watch-btn {
             display: inline-block;
             background: red;
             color: white;
-            padding: 10px 20px;
-            font-size: 1.2rem;
+            padding: 0.5vw 1vw;
+            font-size: 0.8vw;
             text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
+            border-radius: 0.5vw;
+            margin-top: 1vw;
+            margin-left: 1vw;
+            cursor: pointer;
         }
         .description {
-            font-size: 1.2rem;
-            margin-top: 15px;
+            font-size: 2vw;
+            margin-top: 1.5vw;
             max-width: 500px;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden; /* Hidden by default, show on open */
+            z-index: 1000;
+        }
+        .modal-content {
+            position: relative;
+            width: 50%; /* 50% of the screen width */
+            height: auto;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+        .iframe-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio (height = width * 9 / 16) */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+        }
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
     <div class="background">
         <div class="overlay"></div>
-        <div class="content">
+        <div class="content" style="bottom: 10%;">
+            <a href="javascript:history.back()" class="back-btn">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+            </a>
             <h1>{{ movie.name }}</h1>
-            <a href="#" class="watch-btn">WATCH</a>
+            <div class="watch-btn" onclick="openTrailer()">Watch Trailer</div>
             <p class="description">{{ movie.description }}</p>
+            <div id="movieDetails" class="movie-details">
+                <p><strong>Director:</strong> <span id="director"></span></p>
+                <p><strong>Actors:</strong> <span id="actors"></span></p>
+                <p><strong>Box Office:</strong> <span id="boxOffice"></span></p>
+                <p><strong>Plot:</strong> <span id="plot"></span></p>
+                <p><strong>Genre:</strong> <span id="genre"></span></p>
+                <p><strong>Released:</strong> <span id="released"></span></p>
+            </div>
+            <style>
+                .movie-details {
+                    background-color: rgba(109, 109, 109, 0.5);
+                    padding: 1.5vw;
+                    border-radius: 0.5vw;
+                    margin-top: 2vw;
+                }
+                .movie-details p {
+                    font-size: 1.2vw;
+                    margin: 0.5vw 0;
+                }
+                .movie-details strong {
+                    color: #ffcc00;
+                }
+            </style>
         </div>
     </div>
+    <div id="trailerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTrailer()">&times;</span>
+            <div class="iframe-container">
+                <iframe id="trailerFrame" src="" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTrailer() {
+            var trailerUrl = "{{ movie.trailer | replace('watch?v=', 'embed/') }}";  
+            var frame = document.getElementById('trailerFrame');
+            document.getElementById('trailerModal').style.visibility = 'visible';
+            frame.src = trailerUrl + "?autoplay=1&rel=0&modestbranding=1";
+            frame.allow = "autoplay";
+            history.replaceState(null, null, location.href); // Replace the current state to avoid adding a new entry
+        }
+
+        function closeTrailer() {
+            var frame = document.getElementById('trailerFrame');
+            document.getElementById('trailerModal').style.visibility = 'hidden';
+            frame.src = "";
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('trailerModal');
+            if (event.target == modal) {
+                closeTrailer();
+                setTimeout(function() {
+                    history.back();
+                    history.back();
+                }, 300); // Increased delay to ensure trailer is closed before navigating back
+            }
+        }
+
+        // Fetch movie details from OMDB API
+        document.addEventListener('DOMContentLoaded', function() {
+            var movieTitle = "{{ movie.name }}";
+            var apiKey = "983e7eab"; // Replace with your OMDB API key
+            var url = `https://www.omdbapi.com/?t=${encodeURIComponent(movieTitle)}&apikey=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.Response === "True") {
+                        document.getElementById('director').textContent = data.Director;
+                        document.getElementById('actors').textContent = data.Actors;
+                        document.getElementById('boxOffice').textContent = data.BoxOffice;
+                        document.getElementById('plot').textContent = data.Plot;
+                        document.getElementById('genre').textContent = data.Genre;
+                        document.getElementById('released').textContent = data.Released;
+                        document.getElementById('language').textContent = data.Language;
+                    } else {
+                        console.error('Movie not found:', data.Error);
+                    }
+                })
+                .catch(error => console.error('Error fetching movie details:', error));
+        });
+    </script>
+    <style>
+        .back-btn {
+            display: inline-block;
+            color: white;
+            font-size: 1.5vw;
+            text-decoration: none;
+            margin-bottom: 1vw;
+        }
+        .back-btn i {
+            margin-right: 0.5vw;
+        }
+    </style>
 </body>
 </html>
