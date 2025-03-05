@@ -20,8 +20,6 @@ movies_sorted = movies
 def home():
     conn = get_db_connection()
     global movies_sorted
-    movies_by_release = conn.execute('SELECT * FROM Movies ORDER BY release DESC').fetchall()
-    movies_sorted_rating = conn.execute('SELECT * FROM Movies ORDER BY rating DESC').fetchall()
     conn.close()
     
     # Format the release date for each movie
@@ -50,7 +48,7 @@ def movies():
     for movie in movies_sorted:
         formatted_movie = dict(movie)
         formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
-        formatted_movies.append(formatted_movie)
+        formatted_movies.append(formatted_movie) 
     
     return render_template("movies.html", movies=formatted_movies)
 
@@ -109,6 +107,20 @@ def sort_movie():
     # Convert the sorted movies to a list of dictionaries
     rendered_html = render_template('movies_sort_template.html', movies=movies_sorted) # uses the sorted movies to render the movies.html template
     return jsonify({'html': rendered_html}) # returns the rendered template of the sorted movies html $.ajax function in scripts.js
+
+@app.route("/movies/<int:movie_id>", methods=["GET"])
+def movie_details(movie_id):
+    conn = get_db_connection()
+    movie = conn.execute('SELECT * FROM Movies WHERE id = ?', (movie_id,)).fetchone()
+    conn.close()
+    
+    if movie is None:
+        return "Movie not found", 404
+    
+    formatted_movie = dict(movie)
+    formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
+    
+    return render_template("movie_details.html", movie=formatted_movie)
 
 if __name__ == '__main__':
     conn = get_db_connection()

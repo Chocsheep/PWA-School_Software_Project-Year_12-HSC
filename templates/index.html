@@ -111,26 +111,30 @@
             </div>
             <div class="carousel-inner">
             <div class="carousel-item">
-              <img src="/static/images/{{shuffled_movies[0].id}}_poster.jpg" class="d-block w-100" alt="First slide">
+              <a href="/movies/{{shuffled_movies[0].id}}">
+              <img src="/static/images/{{shuffled_movies[0].id}}_poster.jpg" class="d-block w-100" alt="First slide" style="object-fit: cover; height: 1000px;">
+              </a>
             </div>
             <div class="carousel-item active">
-              <img src="/static/images/{{shuffled_movies[1].id}}_poster.jpg" class="d-block w-100" alt="Second slide">
+              <a href="/movies/{{shuffled_movies[1].id}}">
+              <img src="/static/images/{{shuffled_movies[1].id}}_poster.jpg" class="d-block w-100" alt="Second slide" style="object-fit: cover; height: 1000px;">
+              </a>
             </div>
             <div class="carousel-item">
-              <img src="/static/images/{{shuffled_movies[2].id}}_poster.jpg" class="d-block w-100" alt="Third slide">
+              <a href="/movies/{{shuffled_movies[2].id}}">
+              <img src="/static/images/{{shuffled_movies[2].id}}_poster.jpg" class="d-block w-100" alt="Third slide" style="object-fit: cover; height: 1000px;">
+              </a>
             </div>
             <div class="carousel-item">
-              <img src="/static/images/{{shuffled_movies[3].id}}_poster.jpg" class="d-block w-100" alt="Fourth slide">
-              <div class="container">
-              <div class="carousel-caption text-end">
-                <h1>Fourth slide headline.</h1>
-                <p>Some representative placeholder content for the fourth slide of this carousel.</p>
-                <p><a class="btn btn-lg btn-primary" href="#">Discover more</a></p>
-              </div>
-              </div>
+              <a href="/movies/{{shuffled_movies[3].id}}">
+              <img src="/static/images/{{shuffled_movies[3].id}}_poster.jpg" class="d-block w-100" alt="Fourth slide" style="object-fit: cover; height: 1000px;">
+              </a>
             </div>
             <div class="carousel-item">
-              <img src="/static/images/{{shuffled_movies[4].id}}_poster.jpg" class="d-block w-100" alt="Fifth slide">
+              <a href="/movies/{{shuffled_movies[4].id}}">
+              <img src="/static/images/{{shuffled_movies[4].id}}_poster.jpg" class="d-block w-100" alt="Fifth slide" style="object-fit: cover; height: 1000px;">
+              </a>
+            </div>
             </div>
             </div>
           <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
@@ -171,31 +175,7 @@
           <button class="carousel-nav left" onclick="moveCarousel(-1)">&#10094;</button>
           <button class="carousel-nav right" onclick="moveCarousel(1)">&#10095;</button>
         </div>
-        
-        <div class="spacer" style="height: 50px;"></div>
-        <!-- Marketing messaging and featurettes -->
-        <div class="container marketing">
-          <!-- Three columns of text below the carousel -->
-          <div class="row">
-            <div class="col-lg-4">
-              <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
-              <h2 class="fw-normal">Heading</h2>
-              <p>Some representative placeholder content for the three columns of text below the carousel. This is the first column.</p>
-              <p><a class="btn btn-secondary" href="#">View details »</a></p>
-            </div>
-            <div class="col-lg-4">
-              <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
-              <h2 class="fw-normal">Heading</h2>
-              <p>Another exciting bit of representative placeholder content. This time, we've moved on to the second column.</p>
-              <p><a class="btn btn-secondary" href="#">View details »</a></p>
-            </div>
-            <div class="col-lg-4">
-              <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
-              <h2 class="fw-normal">Heading</h2>
-              <p>And lastly this, the third column of representative placeholder content.</p>
-              <p><a class="btn btn-secondary" href="#">View details »</a></p>
-            </div>
-          </div>
+           
 
           <!-- Featurettes -->
           <hr class="featurette-divider">

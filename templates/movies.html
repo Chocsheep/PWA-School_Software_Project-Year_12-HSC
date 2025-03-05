@@ -50,9 +50,13 @@
         <div class="movie-list" id="movie-list">
             {% for movie in movies %}
             <div class="movie-container">
-                <img src="/static/images/{{ movie.id }}.jpg" alt="{{ movie.name }} poster" class="movie-poster">
+                <a href="/movies/{{ movie.id }}">
+                    <img src="/static/images/{{ movie.id }}.jpg" alt="{{ movie.name }} poster" class="movie-poster">
+                </a>
                 <div class="movie-details">
-                    <h3 class="title">{{ movie.name }}</h3>
+                    <a href="/movies/{{ movie.id }}">
+                        <h3 class="title">{{ movie.name }}</h3>
+                    </a>
                     <div class="stars">
                     {% for i in range(1, 6) %}
                         {% if i <= ((movie.rating)/2)|int %}
@@ -70,19 +74,6 @@
             </div>
             {% endfor %}
         </div>
-        <h1>
-            number of movies: {{ movies|length }}
-        </h1>
-        <h2>Add a New Movie</h2>
-        <form action="/add_movie" method="post">
-            <label for="name">Movie Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter movie name" required>
-            <label for="release">Release Date:</label>
-            <input type="date" id="release" name="release" required>
-            <label for="rating">Rating:</label>
-            <input type="float" id="rating" name="rating" placeholder="Enter the movie's rating" required>
-            <button type="submit">Add Movie</button>
-        </form>
     </main> 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/static/js/scripts.js"></script>
