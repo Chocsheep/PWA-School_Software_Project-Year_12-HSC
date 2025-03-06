@@ -1,0 +1,104 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: black;
+    color: white;
+}
+.overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+.content {
+    position: absolute;
+    bottom: 25%;
+    left: 5%;
+    max-width: 40%;
+}
+.content h1 {
+    font-size: 5vw;
+    font-weight: bold;
+}
+.watch-btn {
+    display: inline-block;
+    background: red;
+    color: white;
+    padding: 0.5vw 1vw;
+    font-size: 1.5vw;
+    text-decoration: none;
+    border-radius: 0.5vw;
+    margin-top: 1vw;
+    margin-left: 1vw;
+    cursor: pointer;
+}
+.description {
+    font-size: 2vw;
+    margin-top: 1.5vw;
+    max-width: 500px;
+}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden; /* Hidden by default, show on open */
+    z-index: 1000;
+}
+.modal-content {
+    position: relative;
+    width: 50%; /* 50% of the screen width */
+    height: auto;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+}
+.iframe-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio (height = width * 9 / 16) */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+}
+iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.movie-details {
+    background-color: rgba(22, 22, 22, 0.8);
+    padding: 1.5vw;
+    border-radius: 0.5vw;
+    margin-top: 1vw;
+}
+.movie-details p {
+    font-size: 1.2vw;
+    margin: 0.5vw 0;
+}
+.movie-details strong {
+    color: #ffcc00;
+}
+.back-btn {
+    display: inline-block;
+    color: white;
+    font-size: 1.5vw;
+    text-decoration: none;
+    margin-bottom: 1vw;
+}
+.back-btn i {
+    margin-right: 0.5vw;
+}

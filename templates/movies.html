@@ -24,9 +24,22 @@
               <a class="navbar-brand" href="/">Home</a>
             </div>
             <ul class="nav navbar-nav">
-              <li><a href="#">Page 1</a></li>
-              <li><a href="#">Page 2</a></li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Genres
+                  <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <ul>
+                    <li>
+                      <button type="button" onclick="sortMovies('Action')">Action</button>
+                    </li>
+                    <li>
+                      <button type="button" onclick="goToPage(2)">Page 2</button>
+                    </li>
+                  </ul>
+                </ul>
+              </li>
             </ul>
+                  
             <form class="navbar-form navbar-right" action="/search">
               <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search" name="search">

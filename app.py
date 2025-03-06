@@ -83,7 +83,7 @@ def sort_movie():
     global previous_order
 
     order = request.form["order"]  # determining which button was pressed to sort the movies by
-
+    conn = get_db_connection()
     # main logic for toggling sorting based on which button was pressed
     if order == "rating":
         if previous_order == order:
@@ -97,9 +97,13 @@ def sort_movie():
         if previous_order == order:
             toggle_name = "ASC" if toggle_name == "DESC" else "DESC"
         toggle = toggle_name
+    else:
+        movies_sorted = conn.execute(f'SELECT * FROM Movies WHERE genre LIKE "%{order}%"').fetchall()
 
-    conn = get_db_connection()
-    movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall()  # alter the SQL query based on the button pressed and whether it was ascending or descending
+    
+    if order in ["rating", "release", "name"]:
+        movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall()  # alter the SQL query based on the button pressed and whether it was ascending or descending
+
     conn.close()
 
     previous_order = order
