@@ -119,7 +119,8 @@
                     background-color: rgba(22, 22, 22, 0.8);
                     padding: 1.5vw;
                     border-radius: 0.5vw;
-                    margin-top: 2vw;
+                    margin-top: 1vw;
+                    width: 200%;
                 }
                 .movie-details p {
                     font-size: 1.2vw;
@@ -170,12 +171,15 @@
         // Fetch movie details from OMDB API
         document.addEventListener('DOMContentLoaded', function() {
             var movieTitle = "{{ movie.name }}";
-            var apiKey = "983e7eab"; // Replace with your OMDB API key
-            var url = `https://www.omdbapi.com/?t=${encodeURIComponent(movieTitle)}&apikey=${apiKey}`;
+            var apiKey = "983e7eab";
+            var movietitle = `${movieTitle}`;
+            var url = `https://www.omdbapi.com/?t=` + movietitle + `&apikey=${apiKey}&plot=full`;
+            url = url.replace("&#39;", "'");
 
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
+                    console.log('API Response:', data);
                     if (data.Response === "True") {
                         document.getElementById('director').textContent = data.Director;
                         document.getElementById('actors').textContent = data.Actors;
