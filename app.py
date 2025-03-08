@@ -73,6 +73,7 @@ toggle_rating = "DESC"
 toggle_release = "DESC"
 toggle_name = "DESC"
 previous_order = ""
+genre_lock = False
 
 @app.route("/sort_movie", methods=["POST"])
 def sort_movie():
@@ -81,6 +82,7 @@ def sort_movie():
     global toggle_release
     global toggle_name
     global previous_order
+    global genre_lock
 
     order = request.form["order"]  # determining which button was pressed to sort the movies by
     conn = get_db_connection()
@@ -99,14 +101,23 @@ def sort_movie():
         toggle = toggle_name
     else:
         movies_sorted = conn.execute(f'SELECT * FROM Movies WHERE genre LIKE "%{order}%"').fetchall()
+        if order == "id":
+            movies_sorted = conn.execute(f'SELECT * FROM Movies').fetchall()
 
     
     if order in ["rating", "release", "name"]:
-        movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall()  # alter the SQL query based on the button pressed and whether it was ascending or descending
+        if previous_order not in ["rating", "release", "name", "id"]:
+            movies_sorted = conn.execute('SELECT * FROM Movies WHERE genre LIKE ? ORDER BY {} {}'.format(order, toggle), ('%' + previous_order + '%',) ).fetchall() # if the previous order was a genre, sort the movies by the genre and then by the button pressed
+            genre_lock = True
+        else:
+            movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall()  # alter the SQL query based on the button pressed and whether it was ascending or descending
 
     conn.close()
 
-    previous_order = order
+    if genre_lock:
+        genre_lock = False
+    else:
+        previous_order = order
 
     # Convert the sorted movies to a list of dictionaries
     rendered_html = render_template('movies_sort_template.html', movies=movies_sorted) # uses the sorted movies to render the movies.html template
@@ -116,6 +127,7 @@ def sort_movie():
 def movie_details(movie_id):
     conn = get_db_connection()
     movie = conn.execute('SELECT * FROM Movies WHERE id = ?', (movie_id,)).fetchone()
+    movies = conn.execute('SELECT * FROM Movies').fetchall()
     conn.close()
     
     if movie is None:
@@ -124,7 +136,7 @@ def movie_details(movie_id):
     formatted_movie = dict(movie)
     formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
     
-    return render_template("movie_details.html", movie=formatted_movie)
+    return render_template("movie_details.html", movie=formatted_movie, movies=movies)
 
 if __name__ == '__main__':
     conn = get_db_connection()
