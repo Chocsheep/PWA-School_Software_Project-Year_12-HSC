@@ -181,3 +181,13 @@ h3 {
 .navbar {
     border-radius: 10px;
 }
+
+.movie-poster {
+    transition: transform 0.3s ease-in-out; /* Smooth transition */
+}
+
+.movie-poster:hover {
+    transform: scale(1.1); /* Zoom in effect */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* shadow for a pop-out feel */
+    cursor: pointer; /*Change cursor to pointer for interactivity */
+}

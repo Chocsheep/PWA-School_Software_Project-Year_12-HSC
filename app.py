@@ -18,21 +18,24 @@ def get_db_connection():
 conn = get_db_connection()
 movies = conn.execute('SELECT * FROM Movies').fetchall()
 movies_sorted = movies
+conn.close()
 
 @app.route("/")
 def home():
+    global genre_lock
+    genre_lock = False
     conn = get_db_connection()
-    global movies_sorted
-    conn.close()
-    
+    movies = conn.execute('SELECT * FROM Movies').fetchall()
     # Format the release date for each movie
     formatted_movies = []
-    for movie in movies_sorted:
+    for movie in movies:
         formatted_movie = dict(movie)
         formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
         formatted_movies.append(formatted_movie)
-    
-    shuffled_movies = formatted_movies
+    conn.close()
+    conn = get_db_connection()
+    shuffled_movies =  conn.execute('SELECT * FROM Movies').fetchall()
+    conn.close()
     if logged_in:
         recommended_movies = []
 
@@ -48,7 +51,6 @@ def home():
         genres = ['animation', 'action', 'adventure', 'comedy', 'crime', 'drama', 'sci_fi', 'mystery', 'biography', 'history', 'horror', 'thriller']
         genre_points = dict(zip(genres, result))
 
-        conn.close()
         sorted_genre_points = sorted(genre_points.items(), key=lambda x: x[1], reverse=True)
         sorted_genre_points = sorted_genre_points[0:1]
 
@@ -59,6 +61,7 @@ def home():
                 if x[0] in i['genre'].lower().split(', ') and i not in recommended_movies:
                     recommended_movies.append(i)
         print(recommended_movies)
+        conn.close()
 
     random.shuffle(shuffled_movies) # shuffles the movies to display in a random order
     if logged_in:
@@ -70,13 +73,11 @@ def home():
 def serve_manifest():
     return send_file('manifest.json', mimetype='application/manifest+json')
 
-@app.route('/sw.js')
-def serve_sw():
-    return send_file('sw.js', mimetype='application/javascript')
-
 @app.route("/movies")
 def movies():
-    global movies_sorted
+    conn = get_db_connection()
+    movies_sorted = conn.execute('SELECT * FROM Movies').fetchall()
+    conn.close()
     
     # Format the release date for each movie
     formatted_movies = []
@@ -143,15 +144,18 @@ def sort_movie():
         if order == "id":
             movies_sorted = conn.execute(f'SELECT * FROM Movies').fetchall()
             genre_lock = False
+        conn.close()
 
     
     if order in ["rating", "release", "name"]:
         if genre_lock:
+            conn = get_db_connection()
             movies_sorted = conn.execute('SELECT * FROM Movies WHERE genre LIKE ? ORDER BY {} {}'.format(order, toggle), ('%' + genre_hold + '%',) ).fetchall() # if the previous order was a genre, sort the movies by the genre and then by the button pressed
-
-                
+            conn.close()
         else:
+            conn = get_db_connection()
             movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall()  # alter the SQL query based on the button pressed and whether it was ascending or descending
+            conn.close()
 
     conn.close()
     print(order, toggle_rating, toggle_release, toggle_name)
@@ -198,10 +202,10 @@ def movie_details(movie_id):
     # code for adding genre "points" to account for movie reccomendations
 
     if logged_in:
-        for i in movie['genre'].split(',').strip():
+        for i in [g.strip() for g in movie['genre'].split(',')]:
             conn = get_db_connection()
             # Fetch the current value of the genre category
-            cursor = conn.execute(f'SELECT {i} FROM Accounts WHERE username = ?', (user,))
+            cursor = conn.execute(f'SELECT "{i}" FROM Accounts WHERE username = ?', (user,))
             current_value = cursor.fetchone()
 
             # Check if the value exists
@@ -210,7 +214,7 @@ def movie_details(movie_id):
                 new_value = current_value + 1 # increments value by one
 
                 # Update the column by incrementing its value
-                conn.execute(f'UPDATE Accounts SET {i} = ? WHERE username = ?', (new_value, user))
+                conn.execute(f'UPDATE Accounts SET "{i}" = ? WHERE username = ?', (new_value, user))
                 conn.commit()
 
             conn.close()
