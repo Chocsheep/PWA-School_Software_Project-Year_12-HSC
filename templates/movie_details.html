@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="stylesheet" href="/static/css/details.css">
+    <link rel="icon" href="/static/images/logo1.jpg" type="image/icon">
 </head>
 <style>
     .background {
@@ -32,7 +33,8 @@
         transition: transform 0.5s ease-in-out;
       }
       .card {
-        min-width: 200px;
+        flex: 0 0 auto;
+        max-width: 200px;
         margin: 10px;
         background-color: #222;
         padding: 10px;
@@ -65,7 +67,7 @@
             </a>
             <h1 style="font-size: 80px;">{{ movie.name }}</h1>
             <div class="watch-btn" onclick="openTrailer()">Watch Trailer</div>
-            <div id="movieDetails" class="movie-details">
+            <div id="movieDetails" class="movie-details" style:"position: absolute; left: 10%; right: 10%;">
                 <p><strong>Director:</strong> <span id="director"></span></p>
                 <p><strong>Actors:</strong> <span id="actors"></span></p>
                 <p><strong>Box Office:</strong> <span id="boxOffice"></span></p>
@@ -74,10 +76,9 @@
                 <p><strong>Language(s):</strong> <span id="language"></span></p>
                 <p><strong>Awards:</strong> <span id="awards"></span></p>
             </div>
-            
         </div>
     </div>
-    <div id="movieDetails" class="movie-details" style="position: absolute; right: 10%; top: 48.6%; margin-left: 850px;">
+    <div id="movieDetails" class="movie-details" style="position: absolute; top: 48.6%; left: 45%; right: 5%; top: 45%;">
         <p><strong>Plot:</strong> <span id="plot"></span></p>
     </div>
     <div id="trailerModal" class="modal">
@@ -92,8 +93,8 @@
     <div class="carousel-container">
         <div class="carousel" id="carousel">
         {% for x in movies %}
-        {% if x.genre[0] in movie.genre and x.name != movie.name %}
-            <div class="card">
+
+            <div class="card" >
             <a href="/movies/{{ x.id }}">
                 <img src="/static/images/{{ x.id }}.jpg" alt="{{ x.name }} poster" class="x-poster">
             </a>
@@ -112,10 +113,10 @@
                 {% endif %}
                 {% endfor %}
                 </div>
-                <p>Rating: {{ x.rating }} / 10</p>
+                <p style="font-size: 15px;">Rating: {{ x.rating }} / 10</p>
             </div>
             </div>
-        {% endif %}
+
         {% endfor %}
         </div>
       <button class="carousel-nav left" onclick="moveCarousel(-1)">&#10094;</button>

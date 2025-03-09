@@ -80,7 +80,7 @@ iframe {
     height: 100%;
 }
 .movie-details {
-    background-color: rgba(22, 22, 22, 0.8);
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 1.5vw;
     border-radius: 0.5vw;
     margin-top: 1vw;

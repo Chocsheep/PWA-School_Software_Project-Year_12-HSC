@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect, jsonify, flash, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from datetime import datetime
 import random
 import os
 
 app = Flask(__name__)
+app.secret_key = 'sydneytechnicalhighschool'  
 DATABASE = os.path.join(os.path.dirname(__file__), 'database1.db')
 
 def get_db_connection():
@@ -37,11 +39,7 @@ def home():
 
 @app.route("/movies")
 def movies():
-    conn = get_db_connection()
     global movies_sorted
-    movies_by_release = conn.execute('SELECT * FROM Movies ORDER BY release DESC').fetchall()
-    movies_sorted_rating = conn.execute('SELECT * FROM Movies ORDER BY rating DESC').fetchall()
-    conn.close()
     
     # Format the release date for each movie
     formatted_movies = []
@@ -74,6 +72,7 @@ toggle_release = "DESC"
 toggle_name = "DESC"
 previous_order = ""
 genre_lock = False
+genre_hold = ""
 
 @app.route("/sort_movie", methods=["POST"])
 def sort_movie():
@@ -83,6 +82,7 @@ def sort_movie():
     global toggle_name
     global previous_order
     global genre_lock
+    global genre_hold
 
     order = request.form["order"]  # determining which button was pressed to sort the movies by
     conn = get_db_connection()
@@ -101,23 +101,26 @@ def sort_movie():
         toggle = toggle_name
     else:
         movies_sorted = conn.execute(f'SELECT * FROM Movies WHERE genre LIKE "%{order}%"').fetchall()
+        genre_lock = True
+        genre_hold = order
         if order == "id":
             movies_sorted = conn.execute(f'SELECT * FROM Movies').fetchall()
+            genre_lock = False
 
     
     if order in ["rating", "release", "name"]:
-        if previous_order not in ["rating", "release", "name", "id"]:
-            movies_sorted = conn.execute('SELECT * FROM Movies WHERE genre LIKE ? ORDER BY {} {}'.format(order, toggle), ('%' + previous_order + '%',) ).fetchall() # if the previous order was a genre, sort the movies by the genre and then by the button pressed
-            genre_lock = True
+        if genre_lock:
+            movies_sorted = conn.execute('SELECT * FROM Movies WHERE genre LIKE ? ORDER BY {} {}'.format(order, toggle), ('%' + genre_hold + '%',) ).fetchall() # if the previous order was a genre, sort the movies by the genre and then by the button pressed
+
+                
         else:
             movies_sorted = conn.execute(f'SELECT * FROM Movies ORDER BY {order} {toggle}').fetchall()  # alter the SQL query based on the button pressed and whether it was ascending or descending
 
     conn.close()
+    print(order, toggle_rating, toggle_release, toggle_name)
+    print(previous_order)
 
-    if genre_lock:
-        genre_lock = False
-    else:
-        previous_order = order
+    previous_order = order
 
     # Convert the sorted movies to a list of dictionaries
     rendered_html = render_template('movies_sort_template.html', movies=movies_sorted) # uses the sorted movies to render the movies.html template
@@ -127,16 +130,136 @@ def sort_movie():
 def movie_details(movie_id):
     conn = get_db_connection()
     movie = conn.execute('SELECT * FROM Movies WHERE id = ?', (movie_id,)).fetchone()
-    movies = conn.execute('SELECT * FROM Movies').fetchall()
+    movie_genres = conn.execute('SELECT * FROM Movies').fetchall()
+
     conn.close()
     
     if movie is None:
         return "Movie not found", 404
     
+    movielist = []
+    genre_points = {}
+
+    for i in movie_genres:
+        for genre in i['genre'].split(', '):
+            if genre in movie['genre'].split(', '):
+                if i != movie:
+                    if i not in genre_points:
+                        genre_points[i] = 1
+                    else:
+                        genre_points[i] += 1
+
+    
+    sorted_genre = dict(sorted(genre_points.items(), key=lambda item: item[1], reverse=True))
+    print(sorted_genre)
+    for i in sorted_genre:
+        if sorted_genre[i] >= 2:
+            movielist.append(i)
+
+    print(movielist)
+
+
+    
     formatted_movie = dict(movie)
     formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
     
-    return render_template("movie_details.html", movie=formatted_movie, movies=movies)
+    return render_template("movie_details.html", movie=formatted_movie, movies=movielist)
+
+@app.route('/search', methods=['GET'])
+def search():
+    # Get the value of the "search" input field
+    query = request.args.get('search')
+    # Process the query
+    if query:
+        conn = get_db_connection()
+        movies = conn.execute("SELECT * FROM Movies WHERE name LIKE ?", ('%' + query + '%',)).fetchall()
+        formatted_movies = []
+        for movie in movies:
+            formatted_movie = dict(movie)
+            formatted_movie['release'] = datetime.strptime(movie['release'], "%Y-%m-%d").strftime("%Y")
+            formatted_movies.append(formatted_movie)
+        return render_template("movies.html", movies=formatted_movies)
+    else:
+        return 
+    
+@app.route('/account')
+def account():
+    return render_template("login.html")
+
+@app.route('/signup')
+def signup():
+    return render_template("signup.html")
+
+from flask import flash, redirect, url_for
+
+@app.route('/make_account', methods=['POST'])
+def make_account():
+    username = request.form["username"]
+    email = request.form["email"]
+    password = request.form["password"]
+    
+    # Hash the password for security
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+
+    # Connect to the database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Check if the username already exists
+        cursor.execute("SELECT username FROM Accounts WHERE username = ?", (username,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            # Flash message for duplicate username
+            flash("Account creation failed: Username already exists.", "danger")
+            return redirect(url_for('signup'))  # Redirect to the sign-up page
+
+        # SQL query to insert user data if username is unique
+        query = "INSERT INTO Accounts (username, email, password) VALUES (?, ?, ?)"
+        values = (username, email, hashed_password)
+        cursor.execute(query, values)
+        conn.commit()
+
+        # Flash message for successful account creation
+        flash("Account creation successful! Please sign in.", "success")
+        return redirect(url_for('account'))  # Redirect to the sign-in page
+    
+    except Exception as e:
+        # Handle any other exceptions
+        flash(f"Account creation failed: {str(e)}", "danger")
+        return redirect(url_for('signup'))  # Redirect to the sign-up page
+    
+    finally:
+        # Close the database connection
+        cursor.close()
+        conn.close()
+
+@app.route('/login', methods=['POST'])
+def login():
+    # Get the login credentials from the form
+    username = request.form['username']
+    password = request.form['password']
+    
+    # Fetch the stored hashed password for this username from the database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT password FROM Accounts WHERE username = ?", (username,))
+    result = cursor.fetchone()
+    
+    if result:
+        hashed_password = result[0]  # Extract the hashed password from the result
+        
+        # Compare the entered password with the hashed password
+        if check_password_hash(hashed_password, password):
+            flash("Login successful! Welcome back.", "success")  # Success message
+            return redirect(url_for('home_page'))  # Redirect to the home page or dashboard
+        else:
+            flash("Invalid username or password. Please try again.", "danger")  # Error message
+            return redirect(url_for('login_page'))  # Redirect back to the login page
+    else:
+        flash("User not found. Please check your credentials.", "danger")  # User not found message
+        return redirect(url_for('login_page'))  
 
 if __name__ == '__main__':
     conn = get_db_connection()
@@ -146,5 +269,10 @@ if __name__ == '__main__':
                     release DATE NOT NULL,
                     rating REAL NOT NULL,
                     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS Accounts
+                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    password TEXT NOT NULL)''')
     conn.close()
     app.run(debug=True)
