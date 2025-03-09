@@ -8,6 +8,17 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" href="/static/images/logo1.jpg" type="image/icon">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/static/service-worker.js')
+          .then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+          });
+      }
+    </script>
 </head>
 <body>
     <header>
@@ -25,53 +36,53 @@
             </div>
             <ul class="nav navbar-nav">
               <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Genres
-                  <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <ul>
-                    <li>
-                      <button type="button" onclick="sortMovies('id')">All Movies</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Animation')">Animation</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Action')">Action</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Adventure')">Adventure</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Comedy')">Comedy</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Crime')">Crime</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Drama')">Drama</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Sci-Fi')">Sci-Fi</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Mystery')">Mystery</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Biography')">Biography</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('History')">History</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Horror')">Horror</button>
-                    </li>
-                    <li>
-                      <button type="button" onclick="sortMovies('Thriller')">Thriller</button>
-                    </li>
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white; font-weight: bold; text-decoration: none;">
+                      Genres <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu" style="background-color: #343a40; border-radius: 5px; padding: 10px; min-width: 200px;">
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" style="color: #ffffff;" onclick="sortMovies('id')">All Movies</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Animation')">Animation</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Action')">Action</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Adventure')">Adventure</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Comedy')">Comedy</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Crime')">Crime</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Drama')">Drama</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Sci-Fi')">Sci-Fi</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Mystery')">Mystery</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Biography')">Biography</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('History')">History</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Horror')">Horror</button>
+                      </li>
+                      <li style="padding: 5px;">
+                          <button type="button" class="btn btn-link text-light w-100 text-left" onclick="sortMovies('Thriller')">Thriller</button>
+                      </li>
                   </ul>
-                </ul>
               </li>
-            </ul>
+          </ul>
+          
                   
             <form class="navbar-form navbar-right" action="/search">
               <div class="input-group">
@@ -127,5 +138,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script src="/static/js/bootstrap.js" type="text/javascript"></script>
+
 </body>
 </html>

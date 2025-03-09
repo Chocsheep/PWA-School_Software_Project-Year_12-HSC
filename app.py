@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, flash, url_for
+from flask import Flask, render_template, request, redirect, jsonify, flash, url_for, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from datetime import datetime
@@ -8,6 +8,7 @@ import os
 app = Flask(__name__)
 app.secret_key = 'sydneytechnicalhighschool'  
 DATABASE = os.path.join(os.path.dirname(__file__), 'database1.db')
+logged_in = False
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
@@ -32,10 +33,46 @@ def home():
         formatted_movies.append(formatted_movie)
     
     shuffled_movies = formatted_movies
+    if logged_in:
+        recommended_movies = []
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Fetch all columns (genres) for the user
+        query = 'SELECT animation, action, adventure, comedy, crime, drama, "sci-fi", mystery, biography, history, horror, thriller FROM Accounts WHERE username = ?'
+        cursor.execute(query, (user,))
+        result = cursor.fetchone()
+
+        # Map the genres to their corresponding point values
+        genres = ['animation', 'action', 'adventure', 'comedy', 'crime', 'drama', 'sci_fi', 'mystery', 'biography', 'history', 'horror', 'thriller']
+        genre_points = dict(zip(genres, result))
+
+        conn.close()
+        sorted_genre_points = sorted(genre_points.items(), key=lambda x: x[1], reverse=True)
+        sorted_genre_points = sorted_genre_points[0:1]
+
+        for i in formatted_movies:
+            for x in sorted_genre_points:
+                print(i['genre'].split(', '))
+                print(x[0])
+                if x[0] in i['genre'].lower().split(', ') and i not in recommended_movies:
+                    recommended_movies.append(i)
+        print(recommended_movies)
 
     random.shuffle(shuffled_movies) # shuffles the movies to display in a random order
+    if logged_in:
+        return render_template("index.html", movies=formatted_movies, shuffled_movies=shuffled_movies[0:5], recommended_movies=recommended_movies)
+    else:
+        return render_template("index.html", movies=formatted_movies, shuffled_movies=shuffled_movies[0:5], recommended_movies=formatted_movies)
 
-    return render_template("index.html", movies=formatted_movies, shuffled_movies=shuffled_movies[0:5])
+@app.route('/manifest.json')
+def serve_manifest():
+    return send_file('manifest.json', mimetype='application/manifest+json')
+
+@app.route('/sw.js')
+def serve_sw():
+    return send_file('sw.js', mimetype='application/javascript')
 
 @app.route("/movies")
 def movies():
@@ -142,7 +179,7 @@ def movie_details(movie_id):
 
     for i in movie_genres:
         for genre in i['genre'].split(', '):
-            if genre in movie['genre'].split(', '):
+            if genre in movie['genre'].split(', '): # split the genres from string (genre1, genre2, genre3) to tuple ['genre1', 'genre2', 'genre3']
                 if i != movie:
                     if i not in genre_points:
                         genre_points[i] = 1
@@ -153,10 +190,31 @@ def movie_details(movie_id):
     sorted_genre = dict(sorted(genre_points.items(), key=lambda item: item[1], reverse=True))
     print(sorted_genre)
     for i in sorted_genre:
-        if sorted_genre[i] >= 2:
+        if sorted_genre[i] >= (len(movie['genre'].split(', '))-1):
             movielist.append(i)
 
     print(movielist)
+
+    # code for adding genre "points" to account for movie reccomendations
+
+    if logged_in:
+        for i in movie['genre'].split(',').strip():
+            conn = get_db_connection()
+            # Fetch the current value of the genre category
+            cursor = conn.execute(f'SELECT {i} FROM Accounts WHERE username = ?', (user,))
+            current_value = cursor.fetchone()
+
+            # Check if the value exists
+            if current_value is not None:
+                current_value = current_value[0] or 0  # Handle NULL values as 0
+                new_value = current_value + 1 # increments value by one
+
+                # Update the column by incrementing its value
+                conn.execute(f'UPDATE Accounts SET {i} = ? WHERE username = ?', (new_value, user))
+                conn.commit()
+
+            conn.close()
+
 
 
     
@@ -184,7 +242,12 @@ def search():
     
 @app.route('/account')
 def account():
-    return render_template("login.html")
+    global logged_in
+    if logged_in:
+        flash('You are already logged in!', 'info')  # Flash the message
+        return redirect(url_for('home'))
+    else:
+        return render_template("login.html")
 
 @app.route('/signup')
 def signup():
@@ -237,6 +300,8 @@ def make_account():
 
 @app.route('/login', methods=['POST'])
 def login():
+    global logged_in
+    global user
     # Get the login credentials from the form
     username = request.form['username']
     password = request.form['password']
@@ -253,13 +318,23 @@ def login():
         # Compare the entered password with the hashed password
         if check_password_hash(hashed_password, password):
             flash("Login successful! Welcome back.", "success")  # Success message
-            return redirect(url_for('home_page'))  # Redirect to the home page or dashboard
+            logged_in = True
+            user = username
+            return redirect(url_for('home'))  # Redirect to the home page
         else:
             flash("Invalid username or password. Please try again.", "danger")  # Error message
-            return redirect(url_for('login_page'))  # Redirect back to the login page
+            return redirect(url_for('account'))  # Redirect back to the login page
     else:
         flash("User not found. Please check your credentials.", "danger")  # User not found message
-        return redirect(url_for('login_page'))  
+        return redirect(url_for('account'))  
+    
+@app.route('/logout')
+def logout():
+    global logged_in
+    global user
+    logged_in = False
+    user = ""
+    return redirect(url_for("home"))
 
 if __name__ == '__main__':
     conn = get_db_connection()
@@ -273,6 +348,22 @@ if __name__ == '__main__':
                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT NOT NULL,
                     email TEXT NOT NULL,
-                    password TEXT NOT NULL)''')
+                    password TEXT NOT NULL,
+                    animation INTEGER DEFAULT 0,
+                    action INTEGER DEFAULT 0,
+                    adventure INTEGER DEFAULT 0,
+                    comedy INTEGER DEFAULT 0,
+                    crime INTEGER DEFAULT 0,
+                    drama INTEGER DEFAULT 0,
+                    [sci-fi] INTEGER DEFAULT 0,
+                    mystery INTEGER DEFAULT 0,
+                    biography INTEGER DEFAULT 0,
+                    history INTEGER DEFAULT 0,
+                    horror INTEGER DEFAULT 0,
+                    thriller INTEGER DEFAULT 0,
+                    music INTEGER DEFAULT 0,
+                    short INTEGER DEFAULT 0,
+                    fantasy INTEGER DEFAULT 0)''')
+
     conn.close()
     app.run(debug=True)

@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="stylesheet" href="/static/css/details.css">
     <link rel="icon" href="/static/images/logo1.jpg" type="image/icon">
+    <script>
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/static/service-worker.js')
+            .then(function(registration) {
+              console.log('Service Worker registered with scope:', registration.scope);
+            })
+            .catch(function(error) {
+              console.log('Service Worker registration failed:', error);
+            });
+        }
+      </script>
 </head>
 <style>
     .background {
@@ -78,7 +89,7 @@
             </div>
         </div>
     </div>
-    <div id="movieDetails" class="movie-details" style="position: absolute; top: 48.6%; left: 45%; right: 5%; top: 45%;">
+    <div id="movieDetails" class="movie-details" style="position: absolute; top: 48.6%; left: 45%; right: 1%; top: 45%;">
         <p><strong>Plot:</strong> <span id="plot"></span></p>
     </div>
     <div id="trailerModal" class="modal">
@@ -188,5 +199,6 @@
           carousel.style.transform = `translateX(${-index * cardWidth * 9}px)`;
         }
       </script>
+ 
 </body>
 </html>
