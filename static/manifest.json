@@ -11,6 +11,11 @@
         "src": "/static/images/logo1.jpg",
         "sizes": "192x192",
         "type": "image/jpg"
+      },
+      {
+        "src": "/static/images/logo1.jpg",
+        "sizes": "512x512",
+        "type": "image/jpeg"
       }
     ]
   }

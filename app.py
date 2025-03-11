@@ -56,11 +56,8 @@ def home():
 
         for i in formatted_movies:
             for x in sorted_genre_points:
-                print(i['genre'].split(', '))
-                print(x[0])
                 if x[0] in i['genre'].lower().split(', ') and i not in recommended_movies:
                     recommended_movies.append(i)
-        print(recommended_movies)
         conn.close()
 
     random.shuffle(shuffled_movies) # shuffles the movies to display in a random order
@@ -158,8 +155,6 @@ def sort_movie():
             conn.close()
 
     conn.close()
-    print(order, toggle_rating, toggle_release, toggle_name)
-    print(previous_order)
 
     previous_order = order
 
@@ -192,12 +187,10 @@ def movie_details(movie_id):
 
     
     sorted_genre = dict(sorted(genre_points.items(), key=lambda item: item[1], reverse=True))
-    print(sorted_genre)
     for i in sorted_genre:
         if sorted_genre[i] >= (len(movie['genre'].split(', '))-1):
             movielist.append(i)
 
-    print(movielist)
 
     # code for adding genre "points" to account for movie reccomendations
 
