@@ -332,6 +332,16 @@ def logout():
     logged_in = False
     user = ""
     return redirect(url_for("home"))
+import signal
+@app.route("/shutdown", methods=["POST"])
+def shutdown():
+    if request.method == "POST":
+        # Only allow shutdown if you want some sort of security
+        # For example, check if the user is logged in or has admin rights:
+
+        print("Shutting down the server...")
+        os.kill(os.getpid(), signal.SIGINT)  # Sending SIGINT signal to stop the server
+        return "Server shutting down..."
 
 if __name__ == '__main__':
     conn = get_db_connection()
