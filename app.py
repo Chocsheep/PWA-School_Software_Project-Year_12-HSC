@@ -242,7 +242,7 @@ def search():
             formatted_movies.append(formatted_movie)
         return render_template("movies.html", movies=formatted_movies)
     else:
-        return 
+        return redirect(url_for('home'))
     
 @app.route('/account')
 def account():
