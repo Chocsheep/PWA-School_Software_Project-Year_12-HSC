@@ -290,32 +290,5 @@
       carousel.style.transform = `translateX(${-index * cardWidth * 9}px)`;
     }
   </script>
-  <script>
-    // Attach a function to the "unload" event
-    window.onunload = function() {
-        // Send a POST request to the Flask server's shutdown route
-        fetch('/shutdown', {
-            method: 'POST', // Specify it's a POST request
-            keepalive: true // Keep the request alive to ensure it completes
-        });
-    };
-</script>
-<script>
-  // When the page is about to be unloaded (e.g. tab or window is closed)
-  window.addEventListener("beforeunload", function(event) {
-      // Send a POST request to shutdown the Flask server
-      $.ajax({
-          url: '/shutdown',
-          type: 'POST',
-          async: false, // Ensure the shutdown request is completed before closing
-          success: function(response) {
-              console.log(response); // You can log the server response for debugging
-          },
-          error: function(xhr, status, error) {
-              console.error('Shutdown request failed: ' + error);
-          }
-      });
-  });
-</script>
 </body>
 </html>
