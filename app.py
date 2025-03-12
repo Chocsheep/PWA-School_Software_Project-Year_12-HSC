@@ -333,6 +333,7 @@ def logout():
     user = ""
     return redirect(url_for("home"))
 
+
 if __name__ == '__main__':
     conn = get_db_connection()
     conn.execute('''CREATE TABLE IF NOT EXISTS Movies
