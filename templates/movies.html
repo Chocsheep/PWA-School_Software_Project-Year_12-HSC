@@ -106,7 +106,7 @@
         <h2>Movies</h2>
         <div class="movie-list" id="movie-list">
             {% for movie in movies %}
-            <div class="movie-container" style="max-width: 800px;">
+            <div class="movie-container" style="max-width: 100%;">
                 <a href="/movies/{{ movie.id }}">
                     <img src="/static/images/{{ movie.id }}.jpg" alt="{{ movie.name }} poster" class="movie-poster">
                 </a>
